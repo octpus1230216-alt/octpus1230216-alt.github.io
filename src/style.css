@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-slate-950 text-slate-200 antialiased;
+  background-image:
+    radial-gradient(ellipse 60% 45% at 15% 0%, rgba(139, 92, 246, 0.25), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 95% 100%, rgba(34, 211, 238, 0.12), transparent 60%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+/* 数字分身聊天区：气泡布局 */
+.chat-msg {
+  @apply flex;
+}
+.chat-msg--bot {
+  @apply justify-start;
+}
+.chat-msg--user {
+  @apply justify-end;
+}
+.chat-bubble {
+  @apply max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed;
+}
+.chat-bubble--bot {
+  @apply rounded-bl-sm border border-white/10 bg-white/[0.06] text-slate-100;
+}
+.chat-bubble--user {
+  @apply rounded-br-sm bg-gradient-to-br from-violet-500 to-indigo-500 text-white;
+}
+.chat-typing {
+  @apply italic text-slate-400;
+}
+.chat-typing span {
+  animation: chat-blink 1.2s infinite steps(1, end);
+}
+@keyframes chat-blink {
+  0%,
+  20% {
+    opacity: 0;
+  }
+  60%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* 聊天滚动条美化 */
+.chat-log {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.35) transparent;
+}
+.chat-log::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-log::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-slate-500/30;
+}
