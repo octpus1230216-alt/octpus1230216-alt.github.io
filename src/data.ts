@@ -44,11 +44,58 @@ export const about = {
   focus: ['Vibe Coding', 'AIGC', 'RAG', 'LLM 部署及应用'],
 }
 
+/** 作品展示：新增作品只改这里，页面自动多一张卡片 */
+export interface Work {
+  title: string
+  desc: string
+  /** 类型徽章：漫剧 / 软件 / 链接 */
+  kind: '漫剧' | '软件' | '链接'
+  tags: string[]
+  /** TODO: 替换成真实链接（视频地址 / 下载地址 / 主页等） */
+  url: string
+}
+
+export const works: Work[] = [
+  {
+    title: 'AI 漫剧・第一部',
+    desc: '用 AIGC 工具链从剧本到成片的第一次完整实践，分镜、配音、画面全链路跑通。',
+    kind: '漫剧',
+    tags: ['AIGC', '成片'],
+    url: '#', // TODO: 替换成漫剧视频链接
+  },
+  {
+    title: 'AI 应用 APP',
+    desc: '独立设计 + Vibe Coding 落地的 AI 应用，从模糊需求到一个能装进手机的产品。',
+    kind: '软件',
+    tags: ['Vibe Coding', 'App'],
+    url: '#', // TODO: 替换成下载页或体验链接
+  },
+  {
+    title: '本主页 · 数字分身',
+    desc: '这个页面本身就是作品：原生 TS + Vite 构建，底部聊天区是本地知识库驱动的数字分身。',
+    kind: '软件',
+    tags: ['Vite', '数字分身'],
+    url: '#chat',
+  },
+  {
+    title: '学习笔记与拆解',
+    desc: 'LLM 部署、RAG、Prompt 工程的实践笔记，持续更新。',
+    kind: '链接',
+    tags: ['笔记'],
+    url: '#', // TODO: 替换成笔记/社区主页链接
+  },
+]
+
+/** 联系方式 */
+export const contact = {
+  email: 'rzwlt@foxmail.com',
+}
+
 /** 数字分身：人设与知识库 */
 export const persona = {
   name: 'Octopus 数字分身',
   greeting:
-    '你好，我是 Octopus 的数字分身 👋 我是一名探索 AI 世界的产品经理，最近在做 AI 漫剧制作和 AI 应用 APP。有什么想问的，尽管开口。',
+    '你好，我是 Octopus 的数字分身。他对 AI 很有热情，最近在做 AI 漫剧和一款工作效率 App。关于他的问题都可以问我，我只说实话，不清楚的会直接告诉你。',
   quickQuestions: ['你现在在做什么？', '你有哪些作品？', '怎么联系你？'],
 }
 
@@ -63,7 +110,7 @@ export const qaRules: QaRule[] = [
   {
     keywords: ['做什么', '在忙', '最近', '在搞', '干什么'],
     answer:
-      '我最近在并行推进两件事：一是 AI 漫剧制作，用 AIGC 工具链把文字剧本快速变成分镜、配音与画面；二是 AI 应用 APP，从模糊需求出发，独立设计并用 Vibe Coding 落地成可用产品。',
+      '我最近在忙两件事：一是 AI 漫剧，用 AIGC 工具链把文字剧本变成能看的片子；二是一款工作效率 App，想把日常顺手的工作方法做成产品。',
   },
   {
     keywords: ['作品', '项目', '做过', '产品', 'case', '作品集'],
@@ -73,17 +120,17 @@ export const qaRules: QaRule[] = [
   {
     keywords: ['联系', '邮箱', '微信', 'mail', '合作'],
     answer:
-      '如果你想聊聊 AI 应用或产品合作，最方便的方式是邮件联系，也欢迎在 Datawhale 社区里找到我。看到消息一般都会回，聊产品聊 AI 都欢迎 🤝',
+      '最直接的方式是发邮件到 rzwlt@foxmail.com，看到一般都会回；往上一点就是「联系我」横幅，有一键发邮件和复制邮箱按钮，聊产品聊 AI 都欢迎 🤝',
   },
   {
     keywords: ['身份', '职业', '你是谁', '自我介绍', '简介'],
     answer:
-      '我是一名产品经理，标签是「探索 AI 世界」。和传统 PM 不太一样的是，我会自己动手用 Vibe Coding 把想法做成能跑的产品，喜欢把模糊语言转变成实际功能。',
+      '我是 Octopus，一个对 AI 很有热情的人，本职做产品。和他聊 AI 相关的话题会很合拍，特别是把 AI 想法真正落地成产品这件事。',
   },
   {
     keywords: ['擅长', '方向', '关心', '兴趣', '技术'],
     answer:
-      '我擅长也最关心的方向是技术迭代和 AI 应用：持续跟进大模型、AIGC、RAG 这些技术的演进，然后判断哪些能真正落到产品里，让用户用得爽。',
+      '我最长期关注的方向是 LLM 的发展与应用：模型怎么变强、怎么真正用到产品里让人用得上，这块我一直盯着。',
   },
   {
     keywords: ['vibe', '编码', '编程', '开发'],
@@ -113,8 +160,8 @@ export const qaRules: QaRule[] = [
 
 /** 未命中规则时的兜底回答 */
 export const fallbackAnswers = [
-  '这个问题有点超出我的知识范围了 🤔 我比较了解 Octopus 的工作：他做的是产品经理相关的事，最近在推进 AI 漫剧和 AI 应用 APP。换个问题试试？',
-  '我还说不出一个靠谱的答案，毕竟我只是数字分身。你可以问我「你有哪些作品？」或「怎么联系你？」这类问题，我答得很好。',
+  '这个我不太清楚，不想瞎编。我只了解 Octopus 的事：他最近在做 AI 漫剧和一款工作效率 App。要确认的话，建议发邮件到 rzwlt@foxmail.com 问他本人。',
+  '这个我没把握答对，替他不乱说。你可以问我他在做什么、有哪些作品、怎么联系，或者直接发邮件到 rzwlt@foxmail.com。',
 ]
 
 /** 根据用户输入匹配最佳答案：命中首个含关键词的规则，否则随机兜底 */

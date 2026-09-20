@@ -1,6 +1,8 @@
 import { Hero } from './components/Hero'
 import { About } from './components/About'
 import { ProjectCard } from './components/ProjectCard'
+import { Works } from './components/Works'
+import { Contact } from './components/Contact'
 import { Chat } from './components/Chat'
 import { projects } from './data'
 
@@ -16,7 +18,11 @@ export function App(): string {
         <div class="grid gap-5 sm:grid-cols-2">${cards}</div>
       </section>
 
+      ${Works()}
+
       ${About()}
+
+      ${Contact()}
 
       ${Chat()}
 

@@ -1,4 +1,5 @@
 import { persona } from '../data'
+import type { ChatMessage } from '../llm'
 
 /** 聊天区骨架：数字分身 + 消息列表 + 快捷提问 + 输入框 */
 export function Chat(): string {
@@ -23,7 +24,7 @@ export function Chat(): string {
           <h2 class="text-base font-semibold text-white">${persona.name}</h2>
           <p class="flex items-center gap-1.5 text-xs text-slate-400">
             <span class="inline-block h-2 w-2 rounded-full bg-emerald-400"></span>
-            在线 · 由本地知识库驱动
+            在线 · LLM 驱动，断开时自动回退本地知识库
           </p>
         </div>
       </div>
@@ -57,14 +58,19 @@ export function Chat(): string {
   `
 }
 
-/** 挂载后调用：绑定发送、快捷提问、关键词匹配应答 */
-export function initChat(
-  answer: (text: string) => string,
-): void {
+/** 发送函数：接收当前问题与历史对话，返回应答（可能来自 LLM 或本地知识库） */
+export type AskFn = (question: string, history: ChatMessage[]) => Promise<string>
+
+/** 挂载后调用：绑定发送、快捷提问，维护多轮对话历史 */
+export function initChat(ask: AskFn): void {
   const log = document.getElementById('chat-log')
   const form = document.getElementById('chat-form') as HTMLFormElement | null
   const input = document.getElementById('chat-input') as HTMLInputElement | null
   if (!log || !form || !input) return
+
+  /** 完整对话历史（不含欢迎语），随每次问答增长，发给 LLM 时截取最近几轮 */
+  const history: ChatMessage[] = []
+  let busy = false
 
   const scrollToEnd = () => {
     log.scrollTop = log.scrollHeight
@@ -81,8 +87,10 @@ export function initChat(
     scrollToEnd()
   }
 
-  const reply = (question: string) => {
-    // 先显示“正在输入”，再延时给出应答，模拟对话节奏
+  const reply = async (question: string) => {
+    if (busy) return
+    busy = true
+    // 等待期间显示“正在输入…”，真实 LLM 往返一般 1~3 秒
     const typing = document.createElement('div')
     typing.className = 'chat-msg chat-msg--bot'
     typing.innerHTML =
@@ -90,17 +98,23 @@ export function initChat(
     log.appendChild(typing)
     scrollToEnd()
 
-    window.setTimeout(() => {
+    try {
+      // 只带最近 10 条，控制 token 消耗
+      const text = await ask(question, history.slice(-10))
+      addMsg(text, 'bot')
+      history.push({ role: 'assistant', content: text })
+    } finally {
       typing.remove()
-      addMsg(answer(question), 'bot')
-    }, 500)
+      busy = false
+    }
   }
 
   const send = (text: string) => {
     const value = text.trim()
-    if (!value) return
+    if (!value || busy) return
     addMsg(value, 'user')
-    reply(value)
+    history.push({ role: 'user', content: value })
+    void reply(value)
   }
 
   form.addEventListener('submit', (e) => {
