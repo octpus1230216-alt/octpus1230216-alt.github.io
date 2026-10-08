@@ -1,6 +1,6 @@
-import { about } from '../data'
+import { about } from './content'
 
-export function About(): string {
+export function renderAbout(): string {
   const focus = about.focus
     .map(
       (f) =>

@@ -1,8 +1,8 @@
-import { persona } from '../data'
-import type { ChatMessage } from '../llm'
+import { persona, matchAnswer } from './content'
+import { askLLM, type ChatMessage } from './llm'
 
 /** 聊天区骨架：数字分身 + 消息列表 + 快捷提问 + 输入框 */
-export function Chat(): string {
+export function renderChat(): string {
   const quick = persona.quickQuestions
     .map(
       (q) =>
@@ -24,7 +24,7 @@ export function Chat(): string {
           <h2 class="text-base font-semibold text-white">${persona.name}</h2>
           <p class="flex items-center gap-1.5 text-xs text-slate-400">
             <span class="inline-block h-2 w-2 rounded-full bg-emerald-400"></span>
-            在线 · LLM 驱动，断开时自动回退本地知识库
+            在线 
           </p>
         </div>
       </div>
@@ -58,11 +58,12 @@ export function Chat(): string {
   `
 }
 
-/** 发送函数：接收当前问题与历史对话，返回应答（可能来自 LLM 或本地知识库） */
-export type AskFn = (question: string, history: ChatMessage[]) => Promise<string>
-
-/** 挂载后调用：绑定发送、快捷提问，维护多轮对话历史 */
-export function initChat(ask: AskFn): void {
+/**
+ * 挂载后调用：绑定发送、快捷提问，维护多轮对话历史。
+ * LLM 优先，失败自动回退本地关键词知识库。
+ * @param digests 组合根收集的全站模块摘要，用于拼装 LLM 人设。
+ */
+export function initChat(digests: string[]): void {
   const log = document.getElementById('chat-log')
   const form = document.getElementById('chat-form') as HTMLFormElement | null
   const input = document.getElementById('chat-input') as HTMLInputElement | null
@@ -71,6 +72,15 @@ export function initChat(ask: AskFn): void {
   /** 完整对话历史（不含欢迎语），随每次问答增长，发给 LLM 时截取最近几轮 */
   const history: ChatMessage[] = []
   let busy = false
+
+  /** 优先 LLM，失败（未配 Key / 断网 / 限流）回退本地知识库 */
+  const ask = async (question: string, h: ChatMessage[]): Promise<string> => {
+    try {
+      return await askLLM(h, digests)
+    } catch {
+      return matchAnswer(question)
+    }
+  }
 
   const scrollToEnd = () => {
     log.scrollTop = log.scrollHeight

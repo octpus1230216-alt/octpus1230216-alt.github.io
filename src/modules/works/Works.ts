@@ -1,4 +1,4 @@
-import { works, type Work } from '../data'
+import { works, type Work } from './content'
 
 /** 类型徽章配色：漫剧=紫、软件=青、链接=灰 */
 const kindMap = {
@@ -30,7 +30,7 @@ function WorkCard(w: Work): string {
   `
 }
 
-export function Works(): string {
+export function renderWorks(): string {
   const cards = works.map(WorkCard).join('')
 
   return `

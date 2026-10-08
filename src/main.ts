@@ -1,20 +1,15 @@
 import './style.css'
 import { App } from './App'
-import { initChat } from './components/Chat'
-import { initContact } from './components/Contact'
-import { askLLM } from './llm'
-import { matchAnswer } from './data'
+import { sections } from './modules'
 
+/**
+ * 组合根：渲染整页，然后统一触发各模块的 init。
+ * 收集全站模块摘要（digests）注入给需要“看见全站内容”的模块（如数字分身）。
+ */
 const app = document.querySelector<HTMLDivElement>('#app')
 if (app) {
   app.innerHTML = App()
-  initChat(async (question, history) => {
-    try {
-      return await askLLM(history)
-    } catch {
-      // 未配 Key / 断网 / 限流：静默降级到本地关键词知识库
-      return matchAnswer(question)
-    }
-  })
-  initContact()
+
+  const digests = sections.flatMap((s) => s.digest ?? [])
+  sections.forEach((s) => s.init?.({ digests }))
 }

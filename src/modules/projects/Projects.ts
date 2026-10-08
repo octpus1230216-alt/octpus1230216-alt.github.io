@@ -1,11 +1,11 @@
-import type { Project } from '../data'
+import { projects, type Project } from './content'
 
 const accentMap = {
   purple: 'bg-violet-500/15 text-violet-300',
   cyan: 'bg-cyan-400/15 text-cyan-300',
 } as const
 
-export function ProjectCard(p: Project): string {
+function ProjectCard(p: Project): string {
   const badge = accentMap[p.accent]
   const tags = p.tags
     .map(
@@ -21,5 +21,16 @@ export function ProjectCard(p: Project): string {
       <p class="mt-2 text-sm leading-relaxed text-slate-400">${p.desc}</p>
       <div class="mt-4 flex flex-wrap gap-2">${tags}</div>
     </article>
+  `
+}
+
+export function renderProjects(): string {
+  const cards = projects.map(ProjectCard).join('')
+
+  return `
+    <section>
+      <h2 class="mb-5 text-lg font-semibold text-white">项目 / 在做的事</h2>
+      <div class="grid gap-5 sm:grid-cols-2">${cards}</div>
+    </section>
   `
 }

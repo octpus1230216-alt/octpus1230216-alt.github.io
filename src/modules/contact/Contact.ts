@@ -1,7 +1,7 @@
-import { contact } from '../data'
+import { contact } from './content'
 
-/** 联系方式窄条：发邮件按钮 + 一键复制邮箱，挂载在 About 之后 */
-export function Contact(): string {
+/** 联系方式窄条：发邮件按钮 + 一键复制邮箱 */
+export function renderContact(): string {
   return `
     <section class="flex flex-col items-center justify-between gap-4 rounded-2xl
                     border border-violet-500/30 bg-gradient-to-r from-violet-500/10 to-cyan-400/10

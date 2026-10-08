@@ -1,33 +1,18 @@
-import { Hero } from './components/Hero'
-import { About } from './components/About'
-import { ProjectCard } from './components/ProjectCard'
-import { Works } from './components/Works'
-import { Contact } from './components/Contact'
-import { Chat } from './components/Chat'
-import { projects } from './data'
+import { sections } from './modules'
 
+/**
+ * 页面主组装：只遍历注册表渲染，不再硬编码区块顺序。
+ * 以后新增/删除/排序模块都不需要再改这个文件。
+ */
 export function App(): string {
-  const cards = projects.map(ProjectCard).join('')
+  const body = sections.map((s) => s.render()).join('')
 
   return `
     <main class="mx-auto max-w-4xl space-y-10 px-6 py-12">
-      ${Hero()}
-
-      <section>
-        <h2 class="mb-5 text-lg font-semibold text-white">项目 / 在做的事</h2>
-        <div class="grid gap-5 sm:grid-cols-2">${cards}</div>
-      </section>
-
-      ${Works()}
-
-      ${About()}
-
-      ${Contact()}
-
-      ${Chat()}
+      ${body}
 
       <footer class="pt-4 text-center text-xs text-slate-600">
-        © 2026 Octopus · 探索 AI 世界的产品经理
+        © 2026 Octopus · AI海洋的数字章鱼
       </footer>
     </main>
   `
